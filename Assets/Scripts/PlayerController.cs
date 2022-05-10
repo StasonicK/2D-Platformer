@@ -44,7 +44,6 @@ public class PlayerController : MonoBehaviour
         // {
         _grounded = true;
         // }
-
     }
 
     private IEnumerator Jump()
