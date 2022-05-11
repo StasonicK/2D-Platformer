@@ -4,10 +4,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-// [RequireComponent(typeof(Rigidbody2D))]
 public class EnemyController : MonoBehaviour
 {
-    // [SerializeField] private Rigidbody2D _rigidbody2D;
     [SerializeField] private GameObject _platform;
     [SerializeField] private float _speed;
     [SerializeField] private float _levitationHeight = 1.0f;
@@ -20,17 +18,11 @@ public class EnemyController : MonoBehaviour
 
     private void Start()
     {
-        // Instantiate(_enemy, new Vector3(_platform.transform.position.x, _platform.transform.position.y),
-        //     Quaternion.identity);
-
         _spriteRenderer = GetComponent<SpriteRenderer>();
         _platformSpriteRenderer = _platform.GetComponent<SpriteRenderer>();
         float verticalOffset =
             _platformSpriteRenderer.bounds.size.y / 2 + _spriteRenderer.bounds.size.y / 2 + _levitationHeight;
         transform.position = new Vector3(transform.position.x, _platform.transform.position.y + verticalOffset);
-        Debug.Log($"Start verticalOffset {verticalOffset}");
-        Debug.Log($"Start transform.position.y {transform.position.y}");
-        Debug.Log($"Start _platform.transform.position.y {_platform.transform.position.y}");
     }
 
     private void FixedUpdate()
@@ -41,10 +33,8 @@ public class EnemyController : MonoBehaviour
 
         if (hit.collider != null)
         {
-            // Debug.Log("hit.collider != null");
             if (hit.distance >= _levitationHeight)
             {
-                // Debug.Log("hit.distance >= _levitationHeight");
                 _moveLeft = !_moveLeft;
             }
         }

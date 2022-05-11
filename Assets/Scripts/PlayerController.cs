@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Security.Cryptography;
 using Unity.VisualScripting;
 using UnityEngine;
 
@@ -10,12 +11,11 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private Rigidbody2D _rigidbody2D;
     [SerializeField] private Animator _animator;
     [SerializeField] private float _speed;
+    [SerializeField] private float _upForce = 5f;
 
-    protected bool _grounded;
-
-    private float _upForce = 5f;
     private Vector2 _moveVelocity;
     private const string JumpTrigger = "Jump";
+    private const string SpeedFloat = "SpeedFloat";
 
     private void Awake()
     {
@@ -25,33 +25,34 @@ public class PlayerController : MonoBehaviour
 
     private void Update()
     {
-        Vector2 moveVelocity = new Vector2(Input.GetAxis("Horizontal"), 0);
+        float getAxisHorizontal = Input.GetAxis("Horizontal");
+        Vector2 moveVelocity = new Vector2(getAxisHorizontal, 0);
         _moveVelocity = moveVelocity.normalized * _speed;
+        Debug.Log($"SpeedFloat {getAxisHorizontal}");
+        _animator.SetFloat(SpeedFloat, getAxisHorizontal);
 
-        if ((Input.GetKey(KeyCode.Space) || Input.GetKey(KeyCode.UpArrow)) && _grounded)
+        if ((Input.GetKeyDown(KeyCode.Space) || Input.GetKeyDown(KeyCode.UpArrow)))
         {
-            StartCoroutine(Jump());
+            Jump();
         }
     }
 
     private void FixedUpdate()
     {
         _rigidbody2D.MovePosition(_rigidbody2D.position + _moveVelocity * Time.deltaTime);
-
-        // _grounded = false;
-
-        // if (_moveVelocity.y >= 0)
-        // {
-        _grounded = true;
-        // }
     }
 
-    private IEnumerator Jump()
+    private void Jump()
     {
-        Debug.Log("Jump");
-        _rigidbody2D.AddForce(Vector2.up * _upForce * Time.deltaTime, ForceMode2D.Impulse);
+        _rigidbody2D.AddForce(Vector2.up * _upForce, ForceMode2D.Force);
         _animator.SetTrigger(JumpTrigger);
-        Debug.Log($"rigidBody2d {_rigidbody2D.velocity.normalized}");
-        yield return new WaitForFixedUpdate();
+    }
+
+    private void OnTriggerEnter2D(Collider2D col)
+    {
+        if (col.TryGetComponent<EnemyController>(out EnemyController enemyController))
+        {
+            Destroy(gameObject);
+        }
     }
 }
