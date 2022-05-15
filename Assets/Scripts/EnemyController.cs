@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
+[RequireComponent(typeof(SpriteRenderer))]
 public class EnemyController : MonoBehaviour
 {
     [SerializeField] private GameObject _platform;
